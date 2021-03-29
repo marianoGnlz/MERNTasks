@@ -19,7 +19,8 @@ import {
         token: localStorage.getItem('token'),
         autenticado: null,
         usuario: null,
-        mensaje: null
+        mensaje: null,
+        cargando: true
     }
 
     const [state, dispatch] = useReducer(AuthReducer, initialState);
@@ -66,14 +67,45 @@ import {
         }
     }
 
+    const iniciarSesion = async datos => {
+        try {
+            const respuesta = await clienteAxios.post('/api/auth', datos);
+            dispatch({
+                type: LOGIN_EXITOSO,
+                payload: respuesta.data
+            })
+            usuarioAutenticado();
+        } catch (error) {
+            console.log(error.response.data.msg);
+            const alerta = {
+                msg: error.response.data.msg,
+                categoria: 'alerta-error'
+            }
+            dispatch({
+                type: LOGIN_ERROR,
+                payload: alerta
+            })
+        }
+    }
+
+    const cerrarSesion = () => {
+        dispatch({
+            type: CERRAR_SESION
+        })
+    }
+
     return (
         <AuthContext.Provider
             value={{
+                cargando: state.cargando,
                 token: state.token,
                 autenticado: state.autenticado,
                 usuario: state.usuario,
                 mensaje: state.mensaje,
-                registrarUsuario
+                registrarUsuario,
+                iniciarSesion,
+                usuarioAutenticado,
+                cerrarSesion
             }}
         >
             {props.children}

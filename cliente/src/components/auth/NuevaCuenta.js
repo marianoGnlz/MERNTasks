@@ -18,6 +18,7 @@ const NuevaCuenta = (props) => {
     if (mensaje) {
       mostrarAlerta(mensaje.msg, mensaje.categoria);
     }
+    // eslint-disable-next-line
   }, [autenticado, mensaje, props.history])
 
   const [usuario, setUsuario] = useState({
